@@ -16,9 +16,31 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        h1 {
+
+        /* Title + icon */
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 0;
             color: #333;
+        }
+        .title .icon svg {
+            width: 28px;
+            height: 28px;
+            display: block;
+            flex-shrink: 0;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .monitor-info {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
         .input-group {
             margin: 20px 0;
@@ -61,12 +83,6 @@
         button:hover {
             background: #1976D2;
         }
-        .loading {
-            text-align: center;
-            color: #666;
-            padding: 10px;
-            margin-top: 10px;
-        }
         .status {
             margin-top: 15px;
             padding: 10px;
@@ -81,15 +97,52 @@
             background: #ffcdd2;
             color: #c62828;
         }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Monitor Input</h1>
+        <!-- Title with monitor icon -->
+        <header style="margin-bottom: 18px;">
+            <h1 class="title">
+                <span class="icon" aria-hidden="true">
+                    <!-- Simple monitor SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" role="img">
+                        <rect x="2" y="4" width="20" height="14" rx="2" ry="2" stroke="#333" stroke-width="1.5" fill="#f0f4f8"/>
+                        <rect x="9" y="18" width="6" height="1.8" rx="0.6" fill="#333"/>
+                        <rect x="11" y="19.6" width="2" height="1" rx="0.3" fill="#333"/>
+                    </svg>
+                </span>
+                <span>Monitor Input Switcher</span>
+            </h1>
+        </header>
+
+        <!-- Monitor brand/model and current input (model on separate line) -->
+        <div class="monitor-info">
+            <div>
+                {% if monitor_mfg %}
+                    <strong>Manufacturer:</strong> {{ monitor_mfg }}
+                {% else %}
+                    <strong>Manufacturer:</strong> Unknown
+                {% endif %}
+            </div>
+            <div>
+                {% if monitor_model %}
+                    <strong>Model:</strong> {{ monitor_model }}
+                {% else %}
+                    <strong>Model:</strong> Unknown
+                {% endif %}
+            </div>
+            <div style="margin-top:8px;"><strong>Current Input:</strong> {{ current|upper }}</div>
+        </div>
+
         <form method="POST" action="/switch">
             <div class="input-group">
                 <label>
-                    <input type="radio" name="input" value="dp" {{ 'checked' if current == 'dp' else '' }}>
+                    <input type="radio" name="input" value="dp1" {{ 'checked' if current == 'dp1' else '' }}>
                     <span>DisplayPort</span>
                 </label>
                 <label>
@@ -97,12 +150,17 @@
                     <span>USB-C</span>
                 </label>
                 <label>
-                    <input type="radio" name="input" value="unknown" {{ 'checked' if current == 'unknown' else '' }} disabled>
-                    <span>Unknown Input</span>
+                    <input type="radio" name="input" value="hdmi1" {{ 'checked' if current == 'hdmi1' else '' }}>
+                    <span>HDMI-1</span>
+                </label>
+                <label>
+                    <input type="radio" name="input" value="hdmi2" {{ 'checked' if current == 'hdmi2' else '' }}>
+                    <span>HDMI-2</span>
                 </label>
             </div>
             <button type="submit">Switch Input</button>
         </form>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -111,6 +169,7 @@
             {% endif %}
         {% endwith %}
     </div>
+
     <script>
         // Auto-submit form when radio button changes
         document.querySelectorAll('input[type="radio"]').forEach(radio => {
