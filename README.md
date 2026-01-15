@@ -4,12 +4,12 @@ Currently, the RPi hosts a simple web page that allows selecting the input sourc
 Additionally, I am considering support for a physical button via the RPi’s GPIO.
 In the future, I plan to add PIP support and a few other features.
 
-Mysetup 
+My setup 
 - RPi Zero 2
 - Raspberry Pi OS Lite (no desktop)
 - above code
 - code that wraps above with service (to run it as start)
 
-  Prerequisite:
-  - python3 instaled
-  - ddcutil instaled
+Prerequisite:
+- python3 instaled
+- ddcutil instaled
